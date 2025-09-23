@@ -15,7 +15,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -69,7 +68,7 @@ public class Member {
   private Location worksAt;
 
   @ManyToOne
-  @JoinColumn(name = "mem_roleId")
+  @JoinColumn(name = "mem_typeId")
   private MemberType memberType;
 
 

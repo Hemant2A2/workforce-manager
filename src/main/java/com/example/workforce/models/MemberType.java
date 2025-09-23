@@ -23,9 +23,9 @@ public class MemberType {
   @Column(name = "title")
   private String title;
 
-  @Column(name = "alllowed_hours")
+  @Column(name = "allowed_hours")
   private Integer allowedHours;
 
-  @Column(name = "allowed_paid_leaves")
+  @Column(name = "allowed_paid_leave")
   private Integer allowedPaidLeaves;
 }
