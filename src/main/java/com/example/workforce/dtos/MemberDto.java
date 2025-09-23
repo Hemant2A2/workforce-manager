@@ -2,6 +2,8 @@ package com.example.workforce.dtos;
 
 import java.time.LocalDate;
 
+import com.example.workforce.enums.Gender;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +16,7 @@ public class MemberDto {
   private String fName;
   private String mName;
   private String lName;
-  private String gender;
+  private Gender gender;
   private LocalDate dob;
   private String phone;
   private String apartment;
