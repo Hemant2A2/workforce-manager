@@ -160,7 +160,7 @@ CREATE TABLE IF NOT EXISTS Shift (
   start_time TIME NOT NULL,
   end_time TIME NOT NULL,
   title VARCHAR(255) NULL,
-  location_Id INT NOT NULL,
+  location_Id INT,
   PRIMARY KEY (Shift_Id),
   CONSTRAINT fk_Shift_Location1
     FOREIGN KEY (location_Id)

@@ -14,7 +14,7 @@ public class Shift {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Shift_Id")
-    private Long id;
+    private Integer id;
 
     @Column(name = "Day") 
     private String day;

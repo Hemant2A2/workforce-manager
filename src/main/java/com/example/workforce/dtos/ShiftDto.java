@@ -1,0 +1,19 @@
+package com.example.workforce.dtos;
+
+import java.time.LocalTime;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@AllArgsConstructor @NoArgsConstructor
+@Getter @Setter
+public class ShiftDto {
+  private Integer id;
+  private String day;
+  private LocalTime startTime;
+  private LocalTime endTime;
+  private String title;
+
+}
