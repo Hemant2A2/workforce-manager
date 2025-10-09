@@ -1,7 +1,11 @@
 package com.example.workforce.models;
 
+import com.example.workforce.enums.Title;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -21,7 +25,8 @@ public class MemberType {
   private Long id;
 
   @Column(name = "title")
-  private String title;
+  @Enumerated(EnumType.STRING)
+  private Title title;
 
   @Column(name = "allowed_hours")
   private Integer allowedHours;

@@ -25,7 +25,6 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @RequestMapping("/members")
 public class MemberController {
-
   private final MemberService memberService;
 
   @GetMapping

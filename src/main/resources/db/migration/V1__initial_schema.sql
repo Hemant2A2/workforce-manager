@@ -8,7 +8,7 @@ USE workforce_db;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS Member_types (
   mem_typeId INT AUTO_INCREMENT,
-  title VARCHAR(255) NOT NULL,
+  title ENUM("ADMIN", "MANAGER", "MEMBER") NOT NULL,
   allowed_paid_leave INT NOT NULL,
   allowed_hours INT NOT NULL,
   PRIMARY KEY (mem_typeId)
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS Member (
   Fname VARCHAR(255) NOT NULL,
   Mname VARCHAR(255) NULL,
   Lname VARCHAR(255) NULL,
-  Gender ENUM( "Male" ,  "Female" , "Others") NULL,
+  Gender ENUM("MALE" ,  "FEMALE" , "OTHERS") NULL,
   Apartment VARCHAR(255) NULL,
   city VARCHAR(255) NULL,
   DOB DATE NULL,
@@ -177,7 +177,7 @@ CREATE TABLE IF NOT EXISTS Shift_Assignment(
   EmpId INT NOT NULL,
   Week_Id INT NOT NULL,
   Role_Id INT NOT NULL,
-  Attendance ENUM("Present", "Absent", "Leave", "Sick") NULL,
+  Attendance ENUM("PRESENT", "ABSENT", "LEAVE", "SICK") NULL,
   PRIMARY KEY (ShiftId, Week_Id , EmpId, Role_Id),
   CONSTRAINT fk_Shift_Assignment_Shift1
     FOREIGN KEY (ShiftId)
@@ -299,7 +299,7 @@ CREATE TABLE IF NOT EXISTS Unavailability (
 CREATE TABLE IF NOT EXISTS Leave_Request(
   EmpId INT NOT NULL,
   ShiftId INT NOT NULL,
-  Approval ENUM("Pending", "Approved", "Rejected") NOT NULL DEFAULT "Pending",
+  Approval ENUM("PENDING", "APPROVED", "REJECTED") NOT NULL DEFAULT "PENDING",
   PRIMARY KEY (EmpId, ShiftId),
   CONSTRAINT fk_Leave_Request_Member1
     FOREIGN KEY (EmpId)

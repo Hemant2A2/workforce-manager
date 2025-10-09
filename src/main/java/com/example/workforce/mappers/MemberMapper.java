@@ -14,6 +14,10 @@ import com.example.workforce.models.Member;
 
 @Mapper(componentModel = "spring")
 public interface MemberMapper {
+  @Mappings({
+    @Mapping(target = "worksAt", source = "worksAt.id"),
+    @Mapping(target = "type", source = "memberType.title")
+  })
   MemberDto toDto(Member member);
   @Mappings({
     @Mapping(target = "id", ignore = true),

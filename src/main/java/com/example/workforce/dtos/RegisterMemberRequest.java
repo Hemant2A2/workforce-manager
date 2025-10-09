@@ -1,6 +1,7 @@
 package com.example.workforce.dtos;
 
 import com.example.workforce.enums.Gender;
+import com.example.workforce.enums.Title;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,6 +14,8 @@ public class RegisterMemberRequest {
   private String fName;
   private String mName;
   private String lName;
+  private Title type;
+  private Integer worksAt;
   private Gender gender;
   private String phone;
   private String password;

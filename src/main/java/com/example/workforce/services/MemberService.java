@@ -1,22 +1,31 @@
 package com.example.workforce.services;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.workforce.dtos.MemberDto;
 import com.example.workforce.mappers.MemberMapper;
+import com.example.workforce.models.Location;
+import com.example.workforce.models.MemberType;
 import com.example.workforce.dtos.RegisterMemberRequest;
 import com.example.workforce.dtos.UpdateMemberRequest;
+import com.example.workforce.repositories.LocationRepository;
 import com.example.workforce.repositories.MemberRepository;
+import com.example.workforce.repositories.MemberTypeRepository;
 import com.example.workforce.utils.MemberNotFoundException;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @Service
 public class MemberService {
-
   private final MemberRepository memberRepository;
+  private final MemberTypeRepository memberTypeRepository;
+  private final LocationRepository locationRepository;
   private final MemberMapper memberMapper;
+  private final PasswordEncoder passwordEncoder;
 
   public Iterable<MemberDto> getAllMembers() {
     return memberRepository.findAll()
@@ -31,11 +40,21 @@ public class MemberService {
     return memberMapper.toDto(member);
   }
 
+  @Transactional
   public MemberDto registerMember(RegisterMemberRequest request) {
     var member = memberMapper.toEntity(request);
-    member.setPassword(member.getPassword());
-    memberRepository.save(member);
-    return memberMapper.toDto(member);
+    member.setPassword(passwordEncoder.encode(member.getPassword()));
+    MemberType type = memberTypeRepository.findByTitle(request.getType()).orElseThrow(() -> new EntityNotFoundException(
+          "MemberType with title " + request.getType() + " not found"));
+    member.setMemberType(type);
+    if(request.getWorksAt() != null) {
+      Location location = locationRepository.findById(request.getWorksAt()).orElseThrow(() -> new EntityNotFoundException(
+            "Location with id " + request.getWorksAt() + " not found"));
+      member.setWorksAt(location);
+      location.getMembers().add(member);
+    }
+    var saved = memberRepository.save(member);
+    return memberMapper.toDto(saved);
   }
 
   public MemberDto updateMember(Integer id, UpdateMemberRequest request) {
