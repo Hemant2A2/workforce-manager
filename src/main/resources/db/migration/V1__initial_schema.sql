@@ -9,8 +9,8 @@ USE workforce_db;
 CREATE TABLE IF NOT EXISTS Member_types (
   mem_typeId INT AUTO_INCREMENT,
   title ENUM("ADMIN", "MANAGER", "MEMBER") NOT NULL,
-  allowed_paid_leave INT NOT NULL,
-  allowed_hours INT NOT NULL,
+  allowed_paid_leave INT NOT NULL DEFAULT 5,
+  allowed_hours INT NOT NULL DEFAULT 60,
   PRIMARY KEY (mem_typeId)
 );
 
@@ -36,8 +36,8 @@ CREATE TABLE IF NOT EXISTS Location (
 CREATE TABLE IF NOT EXISTS Member (
   EmpId INT AUTO_INCREMENT,
   Fname VARCHAR(255) NOT NULL,
-  Mname VARCHAR(255) NULL,
-  Lname VARCHAR(255) NULL,
+  Mname VARCHAR(255) NOT NULL DEFAULT "",
+  Lname VARCHAR(255) NOT NULL DEFAULT "",
   Gender ENUM("MALE" ,  "FEMALE" , "OTHERS") NULL,
   Apartment VARCHAR(255) NULL,
   city VARCHAR(255) NULL,

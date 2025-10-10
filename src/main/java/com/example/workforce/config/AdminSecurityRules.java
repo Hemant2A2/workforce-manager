@@ -11,6 +11,7 @@ import com.example.workforce.enums.Title;
 public class AdminSecurityRules implements SecurityRules {
   @Override
     public void configure(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry registry) {
-        registry.requestMatchers("/admin/**").hasRole(Title.ADMIN.name());
+        registry
+              .requestMatchers("/admin/**").hasRole(Title.ADMIN.name());
     }
 }

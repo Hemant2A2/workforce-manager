@@ -44,9 +44,12 @@ public class MemberService {
   public MemberDto registerMember(RegisterMemberRequest request) {
     var member = memberMapper.toEntity(request);
     member.setPassword(passwordEncoder.encode(member.getPassword()));
-    MemberType type = memberTypeRepository.findByTitle(request.getType()).orElseThrow(() -> new EntityNotFoundException(
-          "MemberType with title " + request.getType() + " not found"));
-    member.setMemberType(type);
+    MemberType memberType = new MemberType();
+    memberType.setTitle(request.getType());
+    memberType.setAllowedHours(request.getAllowedHours());
+    memberType.setAllowedPaidLeaves(request.getAllowedPaidLeaves());
+    memberTypeRepository.save(memberType);
+    member.setMemberType(memberType);
     if(request.getWorksAt() != null) {
       Location location = locationRepository.findById(request.getWorksAt()).orElseThrow(() -> new EntityNotFoundException(
             "Location with id " + request.getWorksAt() + " not found"));

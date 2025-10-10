@@ -33,41 +33,41 @@ public class AuthController {
 
     @PostMapping("/login")
     public JwtResponse login(
-      @Valid @RequestBody LoginRequest request,
-      HttpServletResponse response) {
+    @Valid @RequestBody LoginRequest request,
+    HttpServletResponse response) {
 
-      var loginResult = authService.login(request);
+    var loginResult = authService.login(request);
 
-      var refreshToken = loginResult.getRefreshToken().toString();
-      var cookie = new Cookie("refreshToken", refreshToken);
-      cookie.setHttpOnly(true);
-      cookie.setPath("/auth/refresh");
-      cookie.setMaxAge(jwtConfig.getRefreshTokenExpiration());
-      cookie.setSecure(true);
-      response.addCookie(cookie);
+    var refreshToken = loginResult.getRefreshToken().toString();
+    var cookie = new Cookie("refreshToken", refreshToken);
+    cookie.setHttpOnly(true);
+    cookie.setPath("/auth/refresh");
+    cookie.setMaxAge(jwtConfig.getRefreshTokenExpiration());
+    cookie.setSecure(true);
+    response.addCookie(cookie);
 
-      return new JwtResponse(loginResult.getAccessToken().toString());
+    return new JwtResponse(loginResult.getAccessToken().toString());
+  }
+
+  @PostMapping("/refresh")
+  public JwtResponse refresh(@CookieValue(value = "refreshToken") String refreshToken) {
+    var accessToken = authService.refreshAccessToken(refreshToken);
+    return new JwtResponse(accessToken.toString());
+  }
+
+  @GetMapping("/me")
+  public ResponseEntity<MemberDto> me() {
+    var user = authService.getCurrentUser();
+    if (user == null) {
+        return ResponseEntity.notFound().build();
     }
 
-    @PostMapping("/refresh")
-    public JwtResponse refresh(@CookieValue(value = "refreshToken") String refreshToken) {
-        var accessToken = authService.refreshAccessToken(refreshToken);
-        return new JwtResponse(accessToken.toString());
-    }
+    var memberDto = memberMapper.toDto(user);
+    return ResponseEntity.ok(memberDto);
+  }
 
-    @GetMapping("/me")
-    public ResponseEntity<MemberDto> me() {
-        var user = authService.getCurrentUser();
-        if (user == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        var memberDto = memberMapper.toDto(user);
-        return ResponseEntity.ok(memberDto);
-    }
-
-    @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<Void> handleBadCredentialsException() {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-    }
+  @ExceptionHandler(BadCredentialsException.class)
+  public ResponseEntity<Void> handleBadCredentialsException() {
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+  }
 }

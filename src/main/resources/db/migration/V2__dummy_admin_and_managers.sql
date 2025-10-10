@@ -2,8 +2,7 @@ USE workforce_db;
 
 INSERT INTO `Member_Types` (`title`, `allowed_hours`, `allowed_paid_leave`) VALUES
   ('ADMIN',   160, 30),
-  ('MANAGER', 160, 24),
-  ('MEMBER', 300, 20);
+  ('MANAGER', 160, 24);
 
 INSERT INTO `Member`
   (`Fname`,`Mname`,`Lname`,`Gender`,`Apartment`,`city`,`DOB`,`Password`,
