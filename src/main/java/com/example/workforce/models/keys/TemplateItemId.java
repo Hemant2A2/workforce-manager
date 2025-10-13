@@ -11,16 +11,16 @@ public class TemplateItemId implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "Empid")
-    private Long empId;
+    private Integer empId;
 
     @Column(name = "ShiftId")
-    private Long shiftId;
+    private Integer shiftId;
 
     @Column(name = "roleId")
-    private Long roleId;
+    private Integer roleId;
 
     @Column(name = "TemplateId")
-    private Long templateId;
+    private Integer templateId;
 
     @Override
     public boolean equals(Object o) {

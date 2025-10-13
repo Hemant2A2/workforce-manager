@@ -1,0 +1,150 @@
+package com.example.workforce.services;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
+import com.example.workforce.dtos.ShiftAssignmentDto;
+import com.example.workforce.enums.Attendance;
+import com.example.workforce.models.Member;
+import com.example.workforce.models.Requirement;
+import com.example.workforce.models.Role;
+import com.example.workforce.models.Shift;
+import com.example.workforce.models.ShiftAssignment;
+import com.example.workforce.models.Week;
+import com.example.workforce.models.keys.ShiftAssignmentId;
+import com.example.workforce.repositories.MemberRepository;
+import com.example.workforce.repositories.RequirementRepository;
+import com.example.workforce.repositories.RoleRepository;
+import com.example.workforce.repositories.ShiftAssignmentRepository;
+import com.example.workforce.repositories.ShiftRepository;
+import com.example.workforce.repositories.WeekRepository;
+
+import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
+
+@Service
+@AllArgsConstructor
+public class ShiftAssignmentService {
+  private final ShiftRepository shiftRepository;
+  private final RequirementRepository requirementRepository;
+  private final RoleRepository roleRepository;
+  private final MemberRepository memberRepository;
+  private final ShiftAssignmentRepository shiftAssignmentRepository;
+  private final WeekRepository weekRepository;
+
+  @Transactional
+  public List<ShiftAssignmentDto> autoAssignMembers(Integer shiftId) {
+    Shift shift = shiftRepository.findById(shiftId)
+                  .orElseThrow(() -> new IllegalArgumentException("Shift not found"));
+
+    List<Requirement> requirements = requirementRepository.findAll()
+                                    .stream()
+                                    .filter(r -> r.getShift().getId().equals(shiftId))
+                                    .collect(Collectors.toList());
+
+    List<ShiftAssignmentDto> shiftAssignments = new ArrayList<>();
+
+    for(Requirement requirement: requirements) {
+      Role role = requirement.getRole();
+      List<Member> candidates = memberRepository.findAll().stream()
+                              .filter(m -> m.getFeasibleRoles().contains(role))
+                              .filter(m -> isAvailableForShift(m, shift))
+                              .collect(Collectors.toList());
+
+      int need = requirement.getCount();
+      for (Member candidate : candidates) {
+        if (need <= 0) break;
+        ShiftAssignmentDto dto = assignMemberToShift(shift, candidate, role);
+        shiftAssignments.add(dto);
+        need--;
+      }
+    }
+    return shiftAssignments;
+  }
+
+
+  @Transactional
+  public ShiftAssignmentDto manualAssignMember(Integer shiftId, Integer memberId, Integer roleId) {
+    Shift shift = shiftRepository.findById(shiftId)
+        .orElseThrow(() -> new IllegalArgumentException("Shift not found"));
+    Member member = memberRepository.findById(memberId)
+        .orElseThrow(() -> new IllegalArgumentException("Member not found"));
+    Role role = roleRepository.findById(roleId)
+        .orElseThrow(() -> new IllegalArgumentException("Role not found"));
+
+    if (!member.getFeasibleRoles().contains(role)) {
+      throw new IllegalArgumentException("Member not feasible for role");
+    }
+    if (!isAvailableForShift(member, shift)) {
+      throw new IllegalArgumentException("Member not available for shift");
+    }
+
+    return assignMemberToShift(shift, member, role);
+  }
+
+  @Transactional
+  public ShiftAssignmentDto assignMemberToShift(Shift shift, Member member, Role role) {
+    Week week = getOrCreateWeekForShift(shift);
+    Integer weekId = week.getId();
+
+    ShiftAssignmentId id = new ShiftAssignmentId(
+      shift.getId(), 
+      member.getId(), 
+      weekId, 
+      role.getId()
+    );
+
+    ShiftAssignment shiftAssignment = new ShiftAssignment();
+    shiftAssignment.setId(id);
+    shiftAssignment.setShift(shift);
+    shiftAssignment.setWeek(week);
+    shiftAssignment.setMember(member);
+    shiftAssignment.setRole(role);
+    shiftAssignment.setAttendance(Attendance.SCHEDULED);
+
+    shiftAssignmentRepository.save(shiftAssignment);
+
+    ShiftAssignmentDto dto = new ShiftAssignmentDto(
+      shift.getId(),
+      member.getId(),
+      role.getId(),
+      shiftAssignment.getAttendance().name()
+    );
+
+    return dto;
+  }
+
+
+
+  private Week getOrCreateWeekForShift(Shift shift) {
+    try {
+      LocalDate date = LocalDate.parse(shift.getDay());
+      // assume week start is the Monday of that week
+      LocalDate monday = date.minusDays((date.getDayOfWeek().getValue() - 1));
+      return weekRepository.findByStartDate(monday)
+          .orElseGet(() -> {
+            Week w = new Week();
+            w.setStartDate(monday);
+            return weekRepository.save(w);
+          });
+    } catch (DateTimeParseException ex) {
+      throw new IllegalStateException("Shift day must be ISO date yyyy-MM-dd to compute week");
+    }
+  }
+
+  private boolean isAvailableForShift(Member member, Shift shift) {
+    if (member.getUnavailableShifts() == null) return true;
+    return member.getUnavailableShifts().stream().noneMatch(us -> {
+      if (!shift.getDay().equals(us.getDay())) return false;
+      // overlapping time?
+      boolean overlap = ! (shift.getEndTime().isBefore(us.getStartTime()) || shift.getStartTime().isAfter(us.getEndTime()));
+      return overlap;
+    });
+  }
+
+}

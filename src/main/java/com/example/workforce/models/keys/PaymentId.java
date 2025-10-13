@@ -11,10 +11,10 @@ public class PaymentId implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "weekId")
-    private Long weekId;
+    private Integer weekId;
 
     @Column(name = "memb_Id")
-    private Long memberId;
+    private Integer memberId;
 
     @Override
     public boolean equals(Object o) {

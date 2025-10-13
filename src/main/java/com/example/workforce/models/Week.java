@@ -12,7 +12,7 @@ public class Week {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "weekId")
-    private Long id;
+    private Integer id;
 
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;

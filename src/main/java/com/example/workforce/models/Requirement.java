@@ -6,7 +6,8 @@ import com.example.workforce.models.keys.RequirementId;
 
 @Entity
 @Table(name = "Requirement")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class Requirement {
     @EmbeddedId

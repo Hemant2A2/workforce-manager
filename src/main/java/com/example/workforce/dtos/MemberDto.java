@@ -1,6 +1,7 @@
 package com.example.workforce.dtos;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import com.example.workforce.enums.Gender;
 import com.example.workforce.enums.Title;
@@ -18,6 +19,7 @@ public class MemberDto {
   private String mName;
   private String lName;
   private Title type;
+  private List<Integer> feasibleRoles;
   private Integer worksAt;
   private Gender gender;
   private double overtimeRequired;

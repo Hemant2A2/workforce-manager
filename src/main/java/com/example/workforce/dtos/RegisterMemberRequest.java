@@ -1,5 +1,7 @@
 package com.example.workforce.dtos;
 
+import java.util.List;
+
 import com.example.workforce.enums.Gender;
 import com.example.workforce.enums.Title;
 
@@ -21,4 +23,5 @@ public class RegisterMemberRequest {
   private Gender gender;
   private String phone;
   private String password;
+  private List<Integer> feasibleRoles;
 }

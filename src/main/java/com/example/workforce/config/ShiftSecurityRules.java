@@ -1,6 +1,5 @@
 package com.example.workforce.config;
 
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.stereotype.Component;
@@ -8,9 +7,9 @@ import org.springframework.stereotype.Component;
 import com.example.workforce.commons.SecurityRules;
 
 @Component
-public class MemberSecurityRules implements SecurityRules {
+public class ShiftSecurityRules implements SecurityRules {
   @Override
     public void configure(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry registry) {
-        registry.requestMatchers("/members/**").permitAll();
+        registry.requestMatchers("/shifts/**").permitAll();
     }
 }

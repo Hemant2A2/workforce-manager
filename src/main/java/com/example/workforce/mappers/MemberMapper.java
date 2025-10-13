@@ -1,6 +1,9 @@
 package com.example.workforce.mappers;
 
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -16,9 +19,18 @@ import com.example.workforce.models.Member;
 public interface MemberMapper {
   @Mappings({
     @Mapping(target = "worksAt", source = "worksAt.id"),
+    @Mapping(target = "feasibleRoles", expression = "java(mapRoles(member))"),
     @Mapping(target = "type", source = "memberType.title")
   })
   MemberDto toDto(Member member);
+
+  default List<Integer> mapRoles(Member member) {
+    return member.getFeasibleRoles()
+          .stream()
+          .map(r -> r.getId())
+          .collect(Collectors.toList());
+  }
+
   @Mappings({
     @Mapping(target = "id", ignore = true),
     @Mapping(target = "apartment", ignore = true),

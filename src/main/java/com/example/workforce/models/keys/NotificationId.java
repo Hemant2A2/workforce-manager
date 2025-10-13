@@ -11,11 +11,11 @@ public class NotificationId implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "MemberId")
-    private Long memberId;
+    private Integer memberId;
 
     // sequence per member (application / db must set this)
     @Column(name = "notif_seq")
-    private Long notifSeq;
+    private Integer notifSeq;
 
     @Override
     public boolean equals(Object o) {

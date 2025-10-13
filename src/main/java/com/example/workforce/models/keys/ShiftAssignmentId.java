@@ -11,16 +11,16 @@ public class ShiftAssignmentId implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "ShiftId")
-    private Long shiftId;
+    private Integer shiftId;
 
     @Column(name = "EmpId")
-    private Long empId;
+    private Integer empId;
 
     @Column(name = "Week_Id")
-    private Long weekId;
+    private Integer weekId;
 
     @Column(name = "Role_Id")
-    private Long roleId;
+    private Integer roleId;
 
     @Override
     public boolean equals(Object o) {

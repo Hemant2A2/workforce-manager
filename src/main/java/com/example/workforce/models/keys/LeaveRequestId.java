@@ -11,10 +11,10 @@ public class LeaveRequestId implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "EmpId")
-    private Long empId;
+    private Integer empId;
 
     @Column(name = "ShiftId")
-    private Long shiftId;
+    private Integer shiftId;
 
     @Override
     public boolean equals(Object o) {

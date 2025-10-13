@@ -4,5 +4,5 @@ public enum Attendance {
     PRESENT,
     ABSENT,
     LEAVE,
-    SICK
+    SCHEDULED
 }

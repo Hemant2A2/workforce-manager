@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 public class Template {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "templateId")
-    private Long id;
+    private Integer id;
 
     @Column(name = "created_on", nullable = false)
     private LocalDateTime createdOn;

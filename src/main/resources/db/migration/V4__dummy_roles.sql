@@ -1,0 +1,12 @@
+use workforce_db;
+
+INSERT INTO Roles (role_name, Standard_Rate, Overtime_Rate) VALUES
+('MANAGER', 50.00, 75.00),
+('ELECTRICIAN', 22.00, 33.00),
+('CARPENTER', 25.00, 37.50),
+('PLUMBER', 24.00, 36.00),
+('SECURITY_GUARD', 18.00, 27.00),
+('CLEANER', 15.00, 22.50),
+('RECEPTIONIST', 20.00, 30.00),
+('SUPERVISOR', 28.00, 42.00),
+('TECHNICIAN', 26.00, 39.00);

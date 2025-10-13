@@ -2,6 +2,8 @@ package com.example.workforce.models;
 
 import lombok.*;
 import jakarta.persistence.*;
+
+import com.example.workforce.enums.Attendance;
 import com.example.workforce.models.keys.ShiftAssignmentId;
 
 @Entity
@@ -13,7 +15,8 @@ public class ShiftAssignment {
     private ShiftAssignmentId id; // (shift, week, emp , role)
 
     @Column(name = "Attendance")
-    private String attendance; // "Present"/"Absent"/"Leave"/"Sick"
+    @Enumerated(EnumType.STRING)
+    private Attendance attendance; // "PRESENT"/"ABSENT"/"LEAVE"/"SCHEDULED"
 
     @MapsId("shiftId")
     @ManyToOne(fetch = FetchType.LAZY)

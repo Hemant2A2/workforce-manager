@@ -34,4 +34,8 @@ public class Shift {
 
     @ManyToMany(mappedBy = "unavailableShifts")
     private Set<Member> unavailableMembers = new HashSet<>();
+
+    @OneToMany(mappedBy = "shift", cascade = CascadeType.ALL)
+    private Set<Requirement> requirements = new HashSet<>();
+
 }

@@ -22,7 +22,7 @@ import lombok.Setter;
 public class MemberType {
   @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "mem_typeId")
-  private Long id;
+  private Integer id;
 
   @Column(name = "title")
   @Enumerated(EnumType.STRING)

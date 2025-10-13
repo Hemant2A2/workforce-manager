@@ -177,7 +177,7 @@ CREATE TABLE IF NOT EXISTS Shift_Assignment(
   EmpId INT NOT NULL,
   Week_Id INT NOT NULL,
   Role_Id INT NOT NULL,
-  Attendance ENUM("PRESENT", "ABSENT", "LEAVE", "SICK") NULL,
+  Attendance ENUM("PRESENT", "ABSENT", "LEAVE", "SCHEDULED") NULL,
   PRIMARY KEY (ShiftId, Week_Id , EmpId, Role_Id),
   CONSTRAINT fk_Shift_Assignment_Shift1
     FOREIGN KEY (ShiftId)

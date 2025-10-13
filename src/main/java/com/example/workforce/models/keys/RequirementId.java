@@ -11,10 +11,10 @@ public class RequirementId implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "role_Id")
-    private Long roleId;
+    private Integer roleId;
 
     @Column(name = "Shift_Id")
-    private Long shiftId;
+    private Integer shiftId;
 
     @Override
     public boolean equals(Object o) {
