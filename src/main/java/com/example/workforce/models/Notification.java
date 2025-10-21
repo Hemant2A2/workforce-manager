@@ -30,6 +30,4 @@ public class Notification {
 
     @Column(name = "title")
     private String title;
-
-    // NOTE: notif_seq (part of id) must be set by app or DB trigger.
 }

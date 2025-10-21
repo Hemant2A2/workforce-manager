@@ -3,7 +3,10 @@ package com.example.workforce.services;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -42,25 +45,41 @@ public class ShiftAssignmentService {
     Shift shift = shiftRepository.findById(shiftId)
                   .orElseThrow(() -> new IllegalArgumentException("Shift not found"));
 
+    Week week = getOrCreateWeekForShift(shift);
+    Integer weekId = week.getId();
+
+    List<ShiftAssignment> existingAssignments = shiftAssignmentRepository.findByShiftId(shiftId);
+    Set<Integer> alreadyAssignedMemberIds = existingAssignments.stream()
+      .filter(a -> a.getWeek() != null && Objects.equals(a.getWeek().getId(), weekId))
+      .map(a -> a.getMember().getId())
+      .collect(Collectors.toSet());
+
     List<Requirement> requirements = requirementRepository.findAll()
                                     .stream()
                                     .filter(r -> r.getShift().getId().equals(shiftId))
                                     .collect(Collectors.toList());
 
     List<ShiftAssignmentDto> shiftAssignments = new ArrayList<>();
+    Set<Integer> assignedThisRun = new HashSet<>();
 
     for(Requirement requirement: requirements) {
       Role role = requirement.getRole();
       List<Member> candidates = memberRepository.findAll().stream()
-                              .filter(m -> m.getFeasibleRoles().contains(role))
-                              .filter(m -> isAvailableForShift(m, shift))
-                              .collect(Collectors.toList());
+                                .filter(m -> m.getFeasibleRoles().contains(role))
+                                .filter(m -> isAvailableForShift(m, shift))
+                                .filter(m -> !alreadyAssignedMemberIds.contains(m.getId()))
+                                .filter(m -> !assignedThisRun.contains(m.getId()))
+                                .collect(Collectors.toList());
+
+      // TODO:  sort candidates by some fairness criteria (least assigned recently, hours worked, etc)
 
       int need = requirement.getCount();
       for (Member candidate : candidates) {
         if (need <= 0) break;
         ShiftAssignmentDto dto = assignMemberToShift(shift, candidate, role);
         shiftAssignments.add(dto);
+        assignedThisRun.add(candidate.getId());
+        alreadyAssignedMemberIds.add(candidate.getId());
         need--;
       }
     }
@@ -91,6 +110,14 @@ public class ShiftAssignmentService {
   public ShiftAssignmentDto assignMemberToShift(Shift shift, Member member, Role role) {
     Week week = getOrCreateWeekForShift(shift);
     Integer weekId = week.getId();
+
+    List<ShiftAssignment> existingForShift = shiftAssignmentRepository.findByShiftId(shift.getId());
+    boolean alreadyAssigned = existingForShift.stream()
+                              .anyMatch(a -> a.getWeek() != null && Objects.equals(a.getWeek().getId(), weekId)
+                              && Objects.equals(a.getMember().getId(), member.getId()));
+    if (alreadyAssigned) {
+      throw new IllegalArgumentException("Member " + member.getId() + " is already assigned for this shift/week");
+    }
 
     ShiftAssignmentId id = new ShiftAssignmentId(
       shift.getId(), 

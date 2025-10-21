@@ -84,13 +84,13 @@ CREATE TABLE IF NOT EXISTS Roles (
 -- Stores notifications sent to members.
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS Notification (
-  notif_id INT AUTO_INCREMENT,
+  notif_seq INT NOT NULL,
   MemberId INT NOT NULL,
   timestamps TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   View_Time TIMESTAMP NULL,
   message TEXT NOT NULL,
   title VARCHAR(255) NULL,
-  PRIMARY KEY (notif_id, MemberId),
+  PRIMARY KEY (notif_seq, MemberId),
   CONSTRAINT fk_Notification_Member1
     FOREIGN KEY (MemberId)
     REFERENCES Member(EmpId)
