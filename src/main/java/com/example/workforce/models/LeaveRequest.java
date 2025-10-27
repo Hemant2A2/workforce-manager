@@ -15,7 +15,7 @@ public class LeaveRequest {
     private LeaveRequestId id; // (empid, shiftid)
 
     @Column(name = "Approval", nullable = false)
-    private LeaveApproval approval; // "Pending","Approved","Rejected"
+    private LeaveApproval approval; // "PENDING","APPROVED","REJECTED"
 
     @MapsId("empId")
     @ManyToOne(fetch = FetchType.LAZY)

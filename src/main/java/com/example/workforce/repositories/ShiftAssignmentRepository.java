@@ -4,7 +4,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.example.workforce.models.ShiftAssignment;
 import com.example.workforce.models.keys.ShiftAssignmentId;
 import java.util.List;
+import java.util.Optional;
 
 public interface ShiftAssignmentRepository extends JpaRepository<ShiftAssignment, ShiftAssignmentId> {
+  List<ShiftAssignment> findByMemberId(Integer memberId);
   List<ShiftAssignment> findByShiftId(Integer shiftId);
+  Optional<ShiftAssignment> findByShiftIdAndMemberIdAndWeekId(Integer shiftId, Integer memberId, Integer weekId);
 }
