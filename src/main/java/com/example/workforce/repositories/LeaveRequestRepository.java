@@ -1,22 +1,23 @@
-// package com.example.workforce.repositories;
+package com.example.workforce.repositories;
 
-// import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-// import com.example.workforce.models.LeaveRequest;
-// import com.example.workforce.models.keys.LeaveRequestId;
+import com.example.workforce.enums.LeaveApproval;
+import com.example.workforce.models.LeaveRequest;
+import com.example.workforce.models.keys.LeaveRequestId;
 
-// import java.util.List;
+import java.util.List;
 
-// public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, LeaveRequestId> {
-//   List<LeaveRequest> findByApproval(String approval);
+public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, LeaveRequestId> {
+  List<LeaveRequest> findByApproval(LeaveApproval approval);
 
-//   List<LeaveRequest> findByShift_Id(Integer shiftId);
+  List<LeaveRequest> findByShiftId(Integer shiftId);
 
-//   List<LeaveRequest> findByMember_Id(Integer memberId);
+  List<LeaveRequest> findByMemberId(Integer memberId);
 
-//   List<LeaveRequest> findByShift_Location_Id(Integer locationId);
+  List<LeaveRequest> findByShiftLocationId(Integer locationId);
 
-//   default LeaveRequest findByMemberIdAndShiftId(Integer memberId, Integer shiftId) {
-//     return findById(new LeaveRequestId(memberId, shiftId)).orElse(null);
-//   }
-// }
+  default LeaveRequest findByMemberIdAndShiftId(Integer memberId, Integer shiftId) {
+    return findById(new LeaveRequestId(memberId, shiftId)).orElse(null);
+  }
+}

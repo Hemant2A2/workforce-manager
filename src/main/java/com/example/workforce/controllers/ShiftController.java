@@ -30,6 +30,11 @@ public class ShiftController {
     return shiftService.getAllShifts();
   }
 
+  @GetMapping("/member/{userId}")
+  public List<ShiftDto> getShiftsForMember(@PathVariable Integer userId) {
+    return shiftService.getShiftsForMember(userId);
+  }
+
   @GetMapping("/{id}")
   public ShiftDto getShift(@PathVariable Integer id) {
     return shiftService.getShift(id);
@@ -51,13 +56,6 @@ public class ShiftController {
     UriComponentsBuilder uriBuilder) {
 
     List<ShiftDto> shiftDtoList = shiftService.createWeeklyShifts(request);
-    // shiftDtoList.forEach(dto -> System.out.println("created shift id = " + dto.getId()));
-    // List<ResponseEntity<?>> responseEntities = new ArrayList<>();
-    // for(ShiftDto shiftDto: shiftDtoList) {
-    //   var uri = uriBuilder.path("/shifts/{id}").buildAndExpand(shiftDto.getId()).toUri();
-    //   responseEntities.add(ResponseEntity.created(uri).body(shiftDto));
-    // }
-    // return responseEntities;
     return ResponseEntity.ok(shiftDtoList);
   }
 

@@ -42,7 +42,7 @@ public class Location {
   private Set<Member> members = new HashSet<>();
 
   @OneToOne
-  @JoinColumn(name = "EmpId")
+  @JoinColumn(name = "manager_Id")
   private Member manager;
 
 }

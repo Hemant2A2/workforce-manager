@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +31,12 @@ public class ShiftAssignmentController {
   public ResponseEntity<ShiftAssignmentDto> manualAssignMember(@PathVariable Integer id, @RequestBody AssignMembersRequest.ManualAssignment manual) {
     ShiftAssignmentDto dto = shiftAssignmentService.manualAssignMember(id, manual.getMemberId(), manual.getRoleId());
     return ResponseEntity.ok(dto);
+  }
+
+  @GetMapping("/{id}")
+  public ResponseEntity<List<ShiftAssignmentDto>> getAssignmentsForShift(@PathVariable Integer id) {
+    List<ShiftAssignmentDto> items = shiftAssignmentService.getAssignmentsForShift(id);
+    return ResponseEntity.ok(items);
   }
 
 }

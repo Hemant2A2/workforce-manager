@@ -15,6 +15,7 @@ import com.example.workforce.models.Role;
 import com.example.workforce.models.Shift;
 import com.example.workforce.models.keys.RequirementId;
 import com.example.workforce.repositories.LocationRepository;
+import com.example.workforce.repositories.ShiftAssignmentRepository;
 import com.example.workforce.repositories.RequirementRepository;
 import com.example.workforce.repositories.RoleRepository;
 import com.example.workforce.repositories.ShiftRepository;
@@ -31,6 +32,7 @@ public class ShiftService {
   private final RoleRepository roleRepository;
   // private final WeekRepository weekRepository;
   private final LocationRepository locationRepository;
+  private final ShiftAssignmentRepository shiftAssignmentRepository;
 
   private final ShiftMapper shiftMapper;
 
@@ -45,6 +47,13 @@ public class ShiftService {
     var shift = shiftRepository.findById(id)
                 .orElseThrow(ShiftNotFoundException::new);
     return shiftMapper.toDto(shift);
+  }
+
+  public List<ShiftDto> getShiftsForMember(Integer memberId) {
+    return shiftAssignmentRepository.findByMemberId(memberId)
+        .stream()
+        .map(sa -> shiftMapper.toDto(sa.getShift()))
+        .toList();
   }
 
   @Transactional

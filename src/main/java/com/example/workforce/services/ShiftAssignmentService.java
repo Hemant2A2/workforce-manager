@@ -146,12 +146,23 @@ public class ShiftAssignmentService {
     return dto;
   }
 
+  public List<ShiftAssignmentDto> getAssignmentsForShift(Integer shiftId) {
+    List<ShiftAssignment> assignments = shiftAssignmentRepository.findByShiftId(shiftId);
+    return assignments.stream()
+        .map(a -> new ShiftAssignmentDto(
+            a.getShift().getId(),
+            a.getMember().getId(),
+            a.getRole().getId(),
+            a.getAttendance() != null ? a.getAttendance().name() : null
+        ))
+        .toList();
+  }
+
 
 
   private Week getOrCreateWeekForShift(Shift shift) {
     try {
       LocalDate date = LocalDate.parse(shift.getDay());
-      // assume week start is the Monday of that week
       LocalDate monday = date.minusDays((date.getDayOfWeek().getValue() - 1));
       return weekRepository.findByStartDate(monday)
           .orElseGet(() -> {

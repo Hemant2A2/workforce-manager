@@ -55,6 +55,18 @@ public class AuthController {
     return new JwtResponse(accessToken.toString());
   }
 
+  @PostMapping("/logout")
+  public ResponseEntity<Void> logout(HttpServletResponse response) {
+    // Clear the refresh token cookie by setting same name/path and maxAge=0
+    var cookie = new Cookie("refreshToken", "");
+    cookie.setHttpOnly(true);
+    cookie.setPath("/auth/refresh");
+    cookie.setMaxAge(0); // instruct browser to delete
+    cookie.setSecure(true);
+    response.addCookie(cookie);
+    return ResponseEntity.noContent().build();
+  }
+
   @GetMapping("/me")
   public ResponseEntity<MemberDto> me() {
     var user = authService.getCurrentUser();
