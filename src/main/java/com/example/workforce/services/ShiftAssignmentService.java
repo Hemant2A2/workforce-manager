@@ -158,6 +158,62 @@ public class ShiftAssignmentService {
         .toList();
   }
 
+  @Transactional
+  public ShiftAssignmentDto markAttendance(Integer shiftId, Integer memberId, String status, Integer managerId) {
+    Shift shift = shiftRepository.findById(shiftId)
+        .orElseThrow(() -> new IllegalArgumentException("Shift not found"));
+
+    // Validate manager permissions: manager must belong to shift's location and be a MANAGER
+    Member manager = memberRepository.findById(managerId)
+        .orElseThrow(() -> new IllegalArgumentException("Manager not found"));
+    if (manager.getMemberType() == null || manager.getMemberType().getTitle() == null
+        || manager.getWorksAt() == null
+        || !manager.getWorksAt().getId().equals(shift.getLocation().getId())) {
+      throw new IllegalArgumentException("Not authorized to mark attendance for this shift");
+    }
+
+    // Check ongoing: today's date equals shift day and current time within window
+    LocalDate today;
+    try {
+      today = LocalDate.parse(shift.getDay());
+    } catch (DateTimeParseException ex) {
+      throw new IllegalStateException("Shift day must be ISO date yyyy-MM-dd");
+    }
+    var nowDate = LocalDate.now();
+    var nowTime = java.time.LocalTime.now();
+    if (!nowDate.equals(today) || nowTime.isBefore(shift.getStartTime()) || nowTime.isAfter(shift.getEndTime())) {
+      throw new IllegalArgumentException("Attendance can only be marked while the shift is ongoing");
+    }
+
+    // Resolve current week for the shift day
+    Week week = getOrCreateWeekForShift(shift);
+    Integer weekId = week.getId();
+
+    // Find assignment and update attendance
+    ShiftAssignment assignment = shiftAssignmentRepository
+        .findByShiftIdAndMemberIdAndWeekId(shiftId, memberId, weekId)
+        .orElseThrow(() -> new IllegalArgumentException("Member is not assigned to this shift/week"));
+
+    Attendance att;
+    try {
+      att = Attendance.valueOf(status.toUpperCase());
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Invalid attendance status. Use PRESENT or ABSENT");
+    }
+    if (att == Attendance.LEAVE) {
+      throw new IllegalArgumentException("LEAVE is managed via leave workflow");
+    }
+    assignment.setAttendance(att);
+    shiftAssignmentRepository.save(assignment);
+
+    return new ShiftAssignmentDto(
+      shiftId,
+      memberId,
+      assignment.getRole().getId(),
+      assignment.getAttendance().name()
+    );
+  }
+
 
 
   private Week getOrCreateWeekForShift(Shift shift) {

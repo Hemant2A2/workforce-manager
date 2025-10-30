@@ -28,6 +28,7 @@ public class DataInitializer implements ApplicationRunner {
   private final MemberTypeRepository memberTypeRepository;
   private final LocationRepository locationRepository;
   private final PasswordEncoder passwordEncoder;
+  private final RoleRepository roleRepository;
 
   @Value("${app.seed.enabled:true}")
   private boolean seedEnabled;
@@ -38,14 +39,17 @@ public class DataInitializer implements ApplicationRunner {
   public DataInitializer(MemberRepository memberRepository,
                          MemberTypeRepository memberTypeRepository,
                          LocationRepository locationRepository,
-                         PasswordEncoder passwordEncoder) {
+                         PasswordEncoder passwordEncoder,
+                         RoleRepository roleRepository) {
     this.memberRepository = memberRepository;
     this.memberTypeRepository = memberTypeRepository;
     this.locationRepository = locationRepository;
     this.passwordEncoder = passwordEncoder;
+    this.roleRepository = roleRepository;
   }
 
   @Override
+  @Transactional
   public void run(ApplicationArguments args) throws Exception {
     if (!seedEnabled) {
       System.out.println("[DataInitializer] seed disabled (app.seed.enabled=false).");
@@ -106,6 +110,8 @@ public class DataInitializer implements ApplicationRunner {
       );
 
       List<Member> savedManagers = new ArrayList<>();
+      Role managerRole = roleRepository.findById(1)
+          .orElseThrow(() -> new IllegalStateException("MANAGER role not found in DB"));
       for (int i = 0; i < managers.size(); i++) {
         String[] m = managers.get(i);
         String pwd = randomPassword(12);
@@ -122,6 +128,7 @@ public class DataInitializer implements ApplicationRunner {
         mm.setPhone(m[4]);
         mm.setAvailedLeaves(0);
         mm.setMemberType(managerType);
+        mm.getFeasibleRoles().add(managerRole);
         mm = memberRepository.save(mm);
         createdCredentials.put("manager:" + mm.getId(), pwd);
         savedManagers.add(mm);
